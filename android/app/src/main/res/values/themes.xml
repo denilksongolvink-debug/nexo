@@ -1,7 +1,7 @@
 <resources>
-    <!-- Tema base para Compose (Material3) -->
-    <style name="Theme.Nexo" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Cores personalizadas -->
+    <!-- Tema base mínimo para a Activity (Compose usa MaterialTheme) -->
+    <style name="Theme.Nexo" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Cores básicas -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_variant</item>
         <item name="colorOnPrimary">@color/on_primary</item>
