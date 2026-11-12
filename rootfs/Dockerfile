@@ -23,7 +23,7 @@ RUN npm ci && npm run build
 #############################
 # Stage 2: final (linux/arm64 via qemu)
 #############################
-FROM --platform=linux/arm64 debian:bookworm-slim@sha256:d0fe3e8d8c7d8b5b8c8e8f8a8b8c8d8e8f8a8b8c8d8e8f8a8b8c8d8e8f8a8b AS final
+FROM --platform=linux/arm64 debian:bookworm-slim AS final
 
 # Metadados
 LABEL org.opencontainers.image.title="Nexo Rootfs"
