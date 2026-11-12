@@ -22,28 +22,28 @@ class SecretStore(private val context: Context) {
     /** Gera segredos na primeira execução */
     suspend fun ensureSecretsGenerated() = withContext(Dispatchers.IO) {
         prefs.edit().apply {
-            if (!contains(KEY_API_KEY)) putString(KEY_API_KEY, generateSecret(32))
-            if (!contains(KEY_DASH_TOKEN)) putString(KEY_DASH_TOKEN, generateSecret(32))
-            if (!contains(KEY_EDGE_SECRET)) putString(KEY_EDGE_SECRET, generateSecret(32))
-            if (!contains(KEY_NONCE)) putString(KEY_NONCE, generateNonce())
-            if (!contains(KEY_EDGE_PORT)) putInt(KEY_EDGE_PORT, 8700)
+            if (!prefs.contains(KEY_API_KEY)) putString(KEY_API_KEY, generateSecret(32))
+            if (!prefs.contains(KEY_DASH_TOKEN)) putString(KEY_DASH_TOKEN, generateSecret(32))
+            if (!prefs.contains(KEY_EDGE_SECRET)) putString(KEY_EDGE_SECRET, generateSecret(32))
+            if (!prefs.contains(KEY_EDGE_NONCE)) putString(KEY_EDGE_NONCE, generateNonce())
+            if (!prefs.contains(KEY_EDGE_PORT)) putInt(KEY_EDGE_PORT, 8700)
         }.apply()
     }
 
     /** Gera novo nonce a cada boot */
     suspend fun rotateNonce() = withContext(Dispatchers.IO) {
-        prefs.edit().putString(KEY_NONCE, generateNonce()).apply()
+        prefs.edit().putString(KEY_EDGE_NONCE, generateNonce()).apply()
     }
 
     /** Escreve runtime.env no armazenamento interno (files/home/.nexo/runtime.env) */
     suspend fun writeRuntimeEnv() = withContext(Dispatchers.IO) {
         val runtimeDir = context.getDir("nexo", Context.MODE_PRIVATE)
         val envFile = java.io.File(runtimeDir, "runtime.env")
-        
+
         val apiKey = prefs.getString(KEY_API_KEY, "")!!
         val dashToken = prefs.getString(KEY_DASH_TOKEN, "")!!
         val edgeSecret = prefs.getString(KEY_EDGE_SECRET, "")!!
-        val nonce = prefs.getString(KEY_NONCE, "")!!
+        val nonce = prefs.getString(KEY_EDGE_NONCE, "")!!
         val edgePort = prefs.getInt(KEY_EDGE_PORT, 8700)
 
         val content = """
@@ -63,7 +63,7 @@ class SecretStore(private val context: Context) {
     }
 
     /** Retorna o nonce atual */
-    fun getNonce(): String = prefs.getString(KEY_NONCE, "")!!
+    fun getNonce(): String = prefs.getString(KEY_EDGE_NONCE, "")!!
 
     /** Retorna a porta do edge */
     fun getEdgePort(): Int = prefs.getInt(KEY_EDGE_PORT, 8700)
