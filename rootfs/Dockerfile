@@ -8,8 +8,8 @@
 #############################
 FROM node:20-bookworm-slim AS web-builder
 
-# Instala git (não incluído na imagem slim)
-RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+# Instala git e ca-certificates (não incluídos na imagem slim)
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Clona Hermes na tag fixada para build do frontend
 ARG HERMES_REF=v0.23.0
