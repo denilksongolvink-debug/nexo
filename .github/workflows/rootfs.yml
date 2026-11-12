@@ -1,16 +1,6 @@
 name: Build Rootfs (arm64)
 
 on:
-  workflow_dispatch:
-    inputs:
-      hermes_ref:
-        description: 'Hermes tag/ref to build (e.g. v0.23.0)'
-        required: true
-        default: 'v0.23.0'
-      python_version:
-        description: 'Python version'
-        required: true
-        default: '3.11'
   push:
     tags:
       - 'rootfs-*'
@@ -22,8 +12,8 @@ permissions:
   id-token: write
 
 env:
-  HERMES_REF: ${{ github.event.inputs.hermes_ref || 'v0.23.0' }}
-  PYTHON_VERSION: ${{ github.event.inputs.python_version || '3.11' }}
+  HERMES_REF: v0.23.0
+  PYTHON_VERSION: '3.11'
   EXTRAS_MINIMOS: web,mcp,acp,cron,uvloop
 
 jobs:
@@ -49,7 +39,6 @@ jobs:
         id: build
         run: |
           cd rootfs
-          # Atualiza versions.env com inputs do workflow
           echo "HERMES_REF=${HERMES_REF}" > versions.env
           echo "PYTHON_VERSION=${PYTHON_VERSION}" >> versions.env
           echo "EXTRAS_MINIMOS=${EXTRAS_MINIMOS}" >> versions.env
@@ -99,9 +88,6 @@ jobs:
 
       - name: Load rootfs image
         run: |
-          # Rebuild image from artifact for testing
-          # (o build job já fez o load via --load, mas artifacts não preservam image)
-          # Aqui só validamos que o tar.zst extrai e o entrypoint funciona
           mkdir -p /tmp/rootfs-test
           cd /tmp/rootfs-test
           tar --use-compress-program=zstd -xf "${GITHUB_WORKSPACE}/rootfs/out/rootfs-arm64.tar.zst"
@@ -118,7 +104,6 @@ jobs:
 
       - name: Test Python imports
         run: |
-          # Testa se o venv tem os imports essenciais
           docker run --rm --platform linux/arm64 \
             -v /tmp/rootfs-test:/rootfs:ro \
             debian:bookworm-slim \
