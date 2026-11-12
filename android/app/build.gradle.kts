@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -27,23 +26,24 @@ android {
         jniLibs {
             useLegacyPackaging = true
         }
-        resources {
-            // Não comprimir .zst (já comprimido)
-            noCompress += "zst"
-        }
+    }
+
+    aaptOptions {
+        // Não comprimir .zst (já comprimido) - deprecated mas funcional
+        noCompress("zst")
     }
 
     signingConfigs {
         create("release") {
-            val storeFile = System.getenv("KEYSTORE_PATH")?.let { file(it) }
-            val storePassword = System.getenv("KEYSTORE_PASSWORD")
-            val keyAlias = System.getenv("KEY_ALIAS")
-            val keyPassword = System.getenv("KEY_PASSWORD")
+            var storeFile: File? = System.getenv("KEYSTORE_PATH")?.let { file(it) }
+            var storePassword: String? = System.getenv("KEYSTORE_PASSWORD")
+            var keyAlias: String? = System.getenv("KEY_ALIAS")
+            var keyPassword: String? = System.getenv("KEY_PASSWORD")
             if (storeFile != null && storePassword != null && keyAlias != null && keyPassword != null) {
-                storeFile = storeFile
-                storePassword = storePassword
-                keyAlias = keyAlias
-                keyPassword = keyPassword
+                this.storeFile = storeFile
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
             }
         }
     }
@@ -60,7 +60,7 @@ android {
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = getByName("release")
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
