@@ -21,7 +21,8 @@ WORKDIR /build/hermes-agent/web
 
 # Build do frontend do dashboard (gera hermes_cli/web_dist/)
 # O dashboard web usa Next.js - build estático independente de arquitetura
-RUN npm ci && npm run build
+# O hermes-agent package.json requer node>=26; bypass com --engine-strict=false
+RUN npm install --engine-strict=false && npm run build
 
 #############################
 # Stage 2: final (linux/arm64 via qemu)
