@@ -76,8 +76,7 @@ android {
     kotlinOptions {
         jvmTarget = "17"
         freeCompilerArgs += listOf(
-            "-Xopt-in=kotlin.RequiresOptIn",
-            "-P", "plugin:androidx.compose.compiler.plugins.kotlin:generateFunctionBody=false"
+            "-Xopt-in=kotlin.RequiresOptIn"
         )
     }
 
