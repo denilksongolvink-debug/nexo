@@ -5,8 +5,6 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_variant</item>
         <item name="colorAccent">@color/secondary</item>
-        <item name="colorBackground">@color/background</item>
-        <item name="colorSurface">@color/surface</item>
         <item name="colorError">@color/error</item>
 
         <!-- Window -->
