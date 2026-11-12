@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Nexo</string>
+    <string name="app_name_debug">Nexo Debug</string>
+    <string name="notification_channel_name">Backend Service</string>
+    <string name="notification_channel_description">Hermes backend running in background</string>
+    <string name="notification_title">Nexo Backend</string>
+    <string name="notification_text">Hermes gateway and dashboard running</string>
+    <string name="bootstrap_downloading">Baixando rootfs…</string>
+    <string name="bootstrap_extracting">Extraindo rootfs…</string>
+    <string name="bootstrap_verifying">Verificando integridade…</string>
+    <string name="bootstrap_ready">Pronto</string>
+    <string name="bootstrap_error">Erro no bootstrap</string>
+    <string name="backend_starting">Iniciando backend…</string>
+    <string name="backend_ready">Backend pronto</string>
+    <string name="backend_error">Erro no backend</string>
+</resources>

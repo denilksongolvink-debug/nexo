@@ -1,0 +1,25 @@
+<resources>
+    <!-- Primary (Azul Nexo) -->
+    <color name="primary">#0EA5E9</color>
+    <color name="primary_variant">#0284C7</color>
+    <color name="on_primary">#FFFFFF</color>
+
+    <!-- Secondary -->
+    <color name="secondary">#64748B</color>
+    <color name="secondary_variant">#475569</color>
+    <color name="on_secondary">#FFFFFF</color>
+
+    <!-- Background/Surface -->
+    <color name="background">#0F172A</color>
+    <color name="surface">#1E293B</color>
+    <color name="on_background">#F8FAFC</color>
+    <color name="on_surface">#F8FAFC</color>
+
+    <!-- Error -->
+    <color name="error">#EF4444</color>
+    <color name="on_error">#FFFFFF</color>
+
+    <!-- Outros -->
+    <color name="outline">#334155</color>
+    <color name="outline_variant">#475569</color>
+</resources>

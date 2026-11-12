@@ -1,0 +1,140 @@
+name: Build Rootfs (arm64)
+
+on:
+  workflow_dispatch:
+    inputs:
+      hermes_ref:
+        description: 'Hermes tag/ref to build (e.g. v0.23.0)'
+        required: true
+        default: 'v0.23.0'
+      python_version:
+        description: 'Python version'
+        required: true
+        default: '3.11'
+  push:
+    tags:
+      - 'rootfs-*'
+
+permissions:
+  contents: read
+  packages: write
+  attestations: write
+  id-token: write
+
+env:
+  HERMES_REF: ${{ github.event.inputs.hermes_ref || 'v0.23.0' }}
+  PYTHON_VERSION: ${{ github.event.inputs.python_version || '3.11' }}
+  EXTRAS_MINIMOS: web,mcp,acp,cron,uvloop
+
+jobs:
+  build:
+    name: Build rootfs-arm64
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/arm64
+
+      - name: Build rootfs
+        id: build
+        run: |
+          cd rootfs
+          # Atualiza versions.env com inputs do workflow
+          echo "HERMES_REF=${HERMES_REF}" > versions.env
+          echo "PYTHON_VERSION=${PYTHON_VERSION}" >> versions.env
+          echo "EXTRAS_MINIMOS=${EXTRAS_MINIMOS}" >> versions.env
+          bash build-rootfs.sh
+
+      - name: Upload rootfs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rootfs-arm64
+          path: |
+            rootfs/out/rootfs-arm64.tar.zst
+            rootfs/out/rootfs-arm64.tar.zst.sha256
+          retention-days: 30
+
+      - name: Release on tag
+        if: startsWith(github.ref, 'refs/tags/rootfs-')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            rootfs/out/rootfs-arm64.tar.zst
+            rootfs/out/rootfs-arm64.tar.zst.sha256
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+
+  smoke-test:
+    name: Smoke Test Rootfs
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Download rootfs artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: rootfs-arm64
+          path: rootfs/out
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/arm64
+
+      - name: Load rootfs image
+        run: |
+          # Rebuild image from artifact for testing
+          # (o build job já fez o load via --load, mas artifacts não preservam image)
+          # Aqui só validamos que o tar.zst extrai e o entrypoint funciona
+          mkdir -p /tmp/rootfs-test
+          cd /tmp/rootfs-test
+          tar --use-compress-program=zstd -xf "${GITHUB_WORKSPACE}/rootfs/out/rootfs-arm64.tar.zst"
+
+      - name: Verify key files exist
+        run: |
+          test -f /tmp/rootfs-test/opt/hermes/venv/bin/hermes
+          test -f /tmp/rootfs-test/opt/hermes/venv/bin/python
+          test -f /tmp/rootfs-test/opt/nexo/supervisor.sh
+          test -f /tmp/rootfs-test/root/.hermes/config.yaml
+          test -f /tmp/rootfs-test/etc/resolv.conf
+          test -d /tmp/rootfs-test/opt/hermes-agent/hermes_cli/web_dist
+          echo "All key files present"
+
+      - name: Test Python imports
+        run: |
+          # Testa se o venv tem os imports essenciais
+          docker run --rm --platform linux/arm64 \
+            -v /tmp/rootfs-test:/rootfs:ro \
+            debian:bookworm-slim \
+            /rootfs/opt/hermes/venv/bin/python -c "
+import hermes_cli
+import fastapi
+import uvicorn
+import mcp
+import httpx
+import pydantic
+print('All imports OK')
+"
+
+      - name: Test hermes version
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v /tmp/rootfs-test:/rootfs:ro \
+            debian:bookworm-slim \
+            /rootfs/opt/hermes/venv/bin/hermes --version

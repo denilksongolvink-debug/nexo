@@ -1,0 +1,126 @@
+# Configuração mínima para Nexo APK
+# Sobrescrita pelo dashboard via /api/config (persistido em /root/.hermes/config.yaml)
+# Montado de files/home -> /root/.hermes no proot
+
+# Terminal backend local (único que funciona no proot sem Docker)
+terminal:
+  backend: local
+
+# Aprovação manual por padrão (segurança)
+approvals:
+  mode: manual
+
+# Desabilita toolsets problemáticas no Android/proot
+agent:
+  disabled_toolsets:
+    - browser           # Chromium indisponível
+    - computer_use      # cua-driver indisponível
+    - stt               # faster-whisper sem wheels ARM64
+    - image_gen         # precisa API key/fal
+    - video_gen         # precisa API key/fal
+    - x_search          # precisa xAI credencial
+
+# Logging
+logging:
+  level: INFO
+
+# Display
+display:
+  skin: default
+  resume_display: minimal
+  busy_input_mode: interrupt
+
+# Context engine
+context:
+  engine: default
+
+# Human delay
+human_delay:
+  mode: off
+
+# Agent service tier
+agent:
+  service_tier: ""
+
+# Delegation reasoning effort
+delegation:
+  reasoning_effort: ""
+
+# Updates
+updates:
+  non_interactive_local_changes: stash
+  refresh_cua_driver: false
+
+# Browser
+browser:
+  headed: false
+
+# Plugins
+plugins:
+  hook_callback_timeout: 30
+  load_timeout_seconds: 60
+
+# Dashboard theme
+dashboard:
+  theme: default
+
+# Proxy (Docker egress - não usado no APK)
+proxy:
+  enabled: false
+  credential_source: env
+  enforce_on_docker: false
+
+# Auth
+auth:
+  adopt_external_logins: false
+
+# Wake word
+wake_word:
+  provider: auto
+
+# TTS
+tts:
+  provider: edge
+
+# STT
+stt:
+  provider: local
+
+# Vision
+vision: {}
+
+# Code execution
+code_execution: {}
+
+# Prompt caching
+prompt_caching: {}
+
+# Bot mode
+bot_mode: {}
+
+# Goals
+goals: {}
+
+# Fallback
+fallback:
+  min_switch_reset_seconds: 300
+
+# Session
+session: {}
+
+# Nous
+nous: {}
+
+# Connections
+connections: {}
+
+# Runtime
+runtime:
+  nofile_soft_limit: 65536
+
+# Model (será configurado no onboarding)
+model: {}
+
+# Memory (built-in por padrão)
+memory:
+  provider: ""

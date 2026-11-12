@@ -1,0 +1,77 @@
+name: Build Web (Nexo Frontend)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'web/**'
+      - '.github/workflows/web.yml'
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Nexo Static Export
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: ./web
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static export
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Verify output
+        run: |
+          test -f out/index.html
+          test -d out/_next
+          echo "Static export OK: $(du -sh out)"
+
+      - name: Upload web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexo-web
+          path: web/out/
+          retention-days: 30
+
+  # Job para copiar web/out para rootfs/overlay/opt/nexo/web (usado pelo rootfs build)
+  prepare-for-rootfs:
+    name: Prepare Web for Rootfs
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download web artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nexo-web
+          path: web/out
+
+      - name: Copy to rootfs overlay
+        run: |
+          mkdir -p rootfs/overlay/opt/nexo/web
+          cp -r web/out/* rootfs/overlay/opt/nexo/web/
+          echo "Web copied to rootfs overlay"
+
+      - name: Upload rootfs-ready web
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexo-web-for-rootfs
+          path: rootfs/overlay/opt/nexo/web/
+          retention-days: 30
