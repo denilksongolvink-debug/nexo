@@ -12,7 +12,6 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.LifecycleService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -51,7 +50,7 @@ class BackendService : Service() {
         sealed interface BackendHealth {
             data class Starting(val component: String) : BackendHealth
             data class ComponentReady(val component: String) : BackendHealth
-            data class Healthy : BackendHealth
+            object Healthy : BackendHealth
             data class Degraded(val message: String) : BackendHealth
             data class Unhealthy(val message: String) : BackendHealth
         }
@@ -65,7 +64,7 @@ class BackendService : Service() {
         wakeLock = powerManager.newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK,
             "Nexo::BackendBootstrap"
-        ).apply { isReferenceCounted = false }
+        ).apply { setReferenceCounted(false) }
 
         createNotificationChannel()
 
@@ -197,10 +196,12 @@ class BackendService : Service() {
 
     private fun stopBackend() {
         healthCheckJob?.cancel()
-        prootRunner?.stop()
-        wakeLock?.release()
-        stopForeground(true)
-        stopSelf()
+        scope.launch {
+            prootRunner?.stop()
+            wakeLock?.release()
+            stopForeground(true)
+            stopSelf()
+        }
     }
 
     private fun restartBackend() {

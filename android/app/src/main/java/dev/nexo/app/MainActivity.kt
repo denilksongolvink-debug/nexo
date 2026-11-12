@@ -65,8 +65,8 @@ class MainActivity : ComponentActivity() {
                 override fun onReceivedError(view: WebView, request: WebResourceRequest?, error: WebResourceError) {
                     Log.w("NexoWebView", "WebView error: ${error?.description}")
                 }
-                override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-                    if (BuildConfig.DEBUG) handler.proceed() else handler.cancel()
+                override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: android.net.http.SslError) {
+                    handler.cancel()
                 }
             }
             webChromeClient = WebChromeClient()
