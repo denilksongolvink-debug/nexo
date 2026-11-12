@@ -91,7 +91,7 @@ class ProotRunner(
             // Aguarda um pouco para ver se o processo morre imediatamente
             Thread.sleep(2000)
             if (process!!.isAlive) {
-                Log.d("ProotRunner", "Backend started successfully (PID: ${process!!.pid()})")
+                Log.d("ProotRunner", "Backend started successfully")
                 return@withContext true
             } else {
                 val exitCode = process!!.exitValue()

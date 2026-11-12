@@ -5,6 +5,7 @@ import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -40,10 +41,10 @@ class BootstrapManager(
         .build()
 
     // Canal para emitir estados (buffer para último estado)
-    private val stateChannel = Channel<BootstrapState>(1)
+    private val stateChannel = Channel<BootstrapState>(Channel.BUFFERED)
     
     /** Fluxo de estados para UI observar */
-    val stateFlow = stateChannel.receiveAsFlow()
+    val stateFlow: kotlinx.coroutines.flow.Flow<BootstrapState> = stateChannel.receiveAsFlow()
 
     /** Versão esperada do rootfs (vem do versions.env no build) */
     private val expectedVersion = "v0.23.0"

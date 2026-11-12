@@ -9,15 +9,16 @@ import java.security.SecureRandom
 /** Gerencia segredos do backend: gera, armazena e escreve runtime.env para o proot */
 class SecretStore(private val context: Context) {
 
+    companion object {
+        private const val KEY_API_KEY = "nexus_api_key"
+        private const val KEY_DASH_TOKEN = "nexus_dash_token"
+        private const val KEY_EDGE_SECRET = "nexus_edge_secret"
+        private const val KEY_EDGE_NONCE = "nexus_edge_nonce"
+        private const val KEY_EDGE_PORT = "nexus_edge_port"
+    }
+
     private val prefs = NexoApplication.getInstance().encryptedPrefs
     private val secureRandom = SecureRandom()
-
-    // Chaves no EncryptedSharedPreferences
-    private const val KEY_API_KEY = "nexus_api_key"
-    private const val KEY_DASH_TOKEN = "nexus_dash_token"
-    private const val KEY_EDGE_SECRET = "nexus_edge_secret"
-    private const val KEY_EDGE_NONCE = "nexus_edge_nonce"
-    private const val KEY_EDGE_PORT = "nexus_edge_port"
 
     /** Gera segredos na primeira execução */
     suspend fun ensureSecretsGenerated() = withContext(Dispatchers.IO) {
@@ -55,7 +56,6 @@ class SecretStore(private val context: Context) {
         """.trimIndent()
 
         envFile.writeText(content)
-        // chmod 600
         envFile.setReadable(false, false)
         envFile.setReadable(true, true)
         envFile.setWritable(false, false)
