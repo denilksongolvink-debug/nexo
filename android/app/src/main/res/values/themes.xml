@@ -1,6 +1,6 @@
 <resources>
     <!-- Tema base para Compose (Material3) -->
-    <style name="Theme.Nexo" parent="android:Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Nexo" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Cores personalizadas -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_variant</item>

@@ -27,7 +27,6 @@
         android:theme="@style/Theme.Nexo"
         android:usesCleartextTraffic="false"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:extractNativeLibs="true"
         tools:replace="android:allowBackup,android:fullBackupContent">
 
         <!-- Main Activity -->
