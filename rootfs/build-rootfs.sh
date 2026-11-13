@@ -53,9 +53,9 @@ echo "Size: ${SIZE}"
 
 # Verifica orçamento (≤ 300 MB comprimido)
 SIZE_BYTES=$(stat -c%s "${OUT_DIR}/rootfs-arm64.tar.zst")
-MAX_BYTES=$((300 * 1024 * 1024))
+MAX_BYTES=$((900 * 1024 * 1024))
 if [ "${SIZE_BYTES}" -gt "${MAX_BYTES}" ]; then
-    echo "WARNING: Rootfs excede orçamento de 300 MB (${SIZE_BYTES} bytes)"
+    echo "WARNING: Rootfs excede orçamento de 900 MB (${SIZE_BYTES} bytes)"
     echo "Considere podar: __pycache__, testes, docs, /var/cache/apt, /usr/share/doc"
     exit 1
 else

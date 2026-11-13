@@ -90,8 +90,12 @@ RUN /root/.local/bin/uv cache clean && \
     find /opt/hermes/venv -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true && \
     find /opt/hermes/venv -name "*.pyc" -delete 2>/dev/null || true && \
     find /opt/hermes/venv -name "*.dist-info" -type d -exec rm -rf {} + 2>/dev/null || true && \
+    find /opt/hermes/venv -name "test*" -type d -exec rm -rf {} + 2>/dev/null || true && \
+    find /opt/hermes/venv -name "tests" -type d -exec rm -rf {} + 2>/dev/null || true && \
+    rm -rf /opt/hermes-agent/web/node_modules 2>/dev/null || true && \
+    rm -rf /opt/hermes-agent/.git 2>/dev/null || true && \
     rm -rf /root/.cache/uv /root/.cargo /tmp/* /var/cache/apt/* && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get clean && rm -rf /var/lib/apt/lists/* /usr/share/doc/* /usr/share/man/*
 
 # Cria diretórios de dados do Hermes
 RUN mkdir -p /root/.hermes/{cron,sessions,logs,pairing,hooks,image_cache,audio_cache,memories,skills}
