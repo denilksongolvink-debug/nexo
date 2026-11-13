@@ -76,7 +76,7 @@ RUN git clone --filter=blob:none --branch ${HERMES_REF} --depth 1 \
 # Instala dependências Python (core + extras mínimos) - hash-verified via uv.lock
 WORKDIR /opt/hermes-agent
 RUN /root/.local/bin/uv pip install --no-cache -e ".[${EXTRAS_MINIMOS}]" --python /opt/hermes/venv/bin/python && \
-    /root/.local/bin/uv pip install --no-cache "ruamel.yaml==0.18.16" "ruamel.yaml.clib==0.2.15" --python /opt/hermes/venv/bin/python
+    /root/.local/bin/uv pip install --no-cache "ruamel.yaml==0.18.16" "ruamel.yaml.clib==0.2.15" "python-dotenv==1.2.4" --python /opt/hermes/venv/bin/python
 
 # Publica comando `hermes` (source_completion.py) - gera entry points, compila TUI
 RUN /opt/hermes/venv/bin/python -I -B -X utf8 hermes_cli/source_completion.py \
