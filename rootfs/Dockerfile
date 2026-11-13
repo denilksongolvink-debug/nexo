@@ -75,7 +75,7 @@ RUN git clone --filter=blob:none --branch ${HERMES_REF} --depth 1 \
 
 # Instala dependências Python (core + extras mínimos) - hash-verified via uv.lock
 WORKDIR /opt/hermes-agent
-RUN /opt/hermes/venv/bin/uv pip install --no-cache -e ".[${EXTRAS_MINIMOS}]"
+RUN /root/.local/bin/uv pip install --no-cache -e ".[${EXTRAS_MINIMOS}]" --python /opt/hermes/venv/bin/python
 
 # Publica comando `hermes` (source_completion.py) - gera entry points, compila TUI
 RUN /opt/hermes/venv/bin/python -I -B -X utf8 hermes_cli/source_completion.py \
@@ -85,7 +85,7 @@ RUN /opt/hermes/venv/bin/python -I -B -X utf8 hermes_cli/source_completion.py \
 COPY --from=web-builder /build/hermes-agent/hermes_cli/web_dist /opt/hermes-agent/hermes_cli/web_dist
 
 # Limpeza agressiva para reduzir tamanho
-RUN /opt/hermes/venv/bin/uv cache clean && \
+RUN /root/.local/bin/uv cache clean && \
     find /opt/hermes/venv -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true && \
     find /opt/hermes/venv -name "*.pyc" -delete 2>/dev/null || true && \
     find /opt/hermes/venv -name "*.dist-info" -type d -exec rm -rf {} + 2>/dev/null || true && \
