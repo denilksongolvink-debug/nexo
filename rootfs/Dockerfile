@@ -89,7 +89,7 @@ COPY --from=web-builder /build/hermes-agent/hermes_cli/web_dist /opt/hermes-agen
 RUN /root/.local/bin/uv cache clean && \
     find /opt/hermes/venv -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true && \
     find /opt/hermes/venv -name "*.pyc" -delete 2>/dev/null || true && \
-    find /opt/hermes/venv -name "*.dist-info" -type d -exec rm -rf {} + 2>/dev/null || true && \
+    # Keep all .dist-info (some packages need metadata at runtime, e.g. httpx2)
     find /opt/hermes/venv -name "test*" -type d -exec rm -rf {} + 2>/dev/null || true && \
     find /opt/hermes/venv -name "tests" -type d -exec rm -rf {} + 2>/dev/null || true && \
     rm -rf /opt/hermes-agent/web/node_modules 2>/dev/null || true && \
