@@ -103,5 +103,8 @@ RUN mkdir -p /root/.hermes/{cron,sessions,logs,pairing,hooks,image_cache,audio_c
 # Copia overlay (resolv.conf, supervisor.sh, config.yaml mínimo)
 COPY overlay/ /
 
+# Garante permissões de execução no supervisor.sh
+RUN chmod +x /opt/nexo/supervisor.sh /opt/nexo/nexo_edge.py
+
 # Entry point: supervisor.sh gerencia gateway + dashboard + edge
 ENTRYPOINT ["/opt/nexo/supervisor.sh"]
