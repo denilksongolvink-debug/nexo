@@ -107,4 +107,4 @@ COPY overlay/ /
 RUN chmod +x /opt/nexo/supervisor.sh /opt/nexo/nexo_edge.py
 
 # Entry point: supervisor.sh gerencia gateway + dashboard + edge
-ENTRYPOINT ["/opt/nexo/supervisor.sh"]
+CMD ["/opt/nexo/supervisor.sh"]

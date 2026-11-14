@@ -64,7 +64,8 @@ fi
 
 # Smoke test rápido
 echo "=== Smoke test ==="
+# Cria runtime.env dummy para o smoke test (no build real, é gerado pelo Kotlin)
 docker run --rm --platform linux/arm64 "${IMAGE_TAG}" \
-    /opt/hermes/venv/bin/python -c "import hermes_cli; import fastapi; import uvicorn; import mcp; print('OK: imports funcionam')"
+    /bin/sh -c 'mkdir -p /root/.nexo && echo "NEXO_API_KEY=test" > /root/.nexo/runtime.env && echo "NEXO_DASH_TOKEN=test" >> /root/.nexo/runtime.env && echo "NEXO_EDGE_SECRET=test" >> /root/.nexo/runtime.env && echo "NEXO_EDGE_NONCE=test" >> /root/.nexo/runtime.env && echo "NEXO_EDGE_PORT=8700" >> /root/.nexo/runtime.env && /opt/hermes/venv/bin/python -c "import hermes_cli; import fastapi; import uvicorn; import mcp; import httpx; import pydantic; print(\"OK: imports funcionam\")"'
 
 echo "=== All done ==="
